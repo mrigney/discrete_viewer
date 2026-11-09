@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# written by the viewer while saving
+*.nc.bak
+*.nc.tmp

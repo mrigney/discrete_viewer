@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discrete Viewer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1 15 13H1z' fill='%23ff6a00'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "./vendor/three.module.js",
+        "three/addons/controls/OrbitControls.js": "./vendor/OrbitControls.js"
+    } }
+  </script>
+</head>
+<body>
+  <header id="toolbar">
+    <div class="brand">Discrete<span>Viewer</span></div>
+    <div class="tb-group">
+      <button id="btn-open" title="Open model (Ctrl+O)">Open…</button>
+      <button id="btn-save" title="Save over the current file (Ctrl+S)" disabled>Save</button>
+      <button id="btn-saveas" title="Save to a new file (Ctrl+Shift+S)" disabled>Save As…</button>
+    </div>
+    <div class="tb-group">
+      <button id="btn-undo" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
+      <button id="btn-redo" title="Redo (Ctrl+Y)" disabled>↷ Redo</button>
+    </div>
+    <div class="tb-group">
+      <label>Color by <select id="sel-colorby"></select></label>
+    </div>
+    <div class="tb-group">
+      <label title="What a click selects">Pick
+        <select id="sel-pick">
+          <option value="element">Element</option>
+          <option value="connected">Connected part</option>
+          <option value="group">Whole group</option>
+        </select>
+      </label>
+      <button id="btn-box" class="toggle" title="Box select (B). Drag a rectangle; Shift adds, Ctrl removes">▭ Box</button>
+      <label class="chk" title="Box selects only what is visible on screen; untick to select through the model"><input type="checkbox" id="chk-visonly" checked> visible only</label>
+    </div>
+    <div class="tb-group">
+      <button id="btn-hide" title="Hide selection (H)">Hide</button>
+      <button id="btn-isolate" title="Show only the selection (I)">Isolate</button>
+      <button id="btn-showall" title="Show everything (Alt+H)">Show all</button>
+    </div>
+    <div class="tb-group">
+      <button id="btn-wire" class="toggle" title="Wireframe overlay (W)">Wire</button>
+      <button id="btn-grid" class="toggle on" title="Ground grid / axes">Grid</button>
+      <select id="sel-view" title="Camera view">
+        <option value="">View…</option>
+        <option value="iso">Iso</option><option value="front">Front (−Y)</option><option value="back">Back (+Y)</option>
+        <option value="left">Left (−X)</option><option value="right">Right (+X)</option><option value="top">Top (+Z)</option>
+      </select>
+      <button id="btn-frame" title="Frame selection, or everything (F)">Frame</button>
+      <button id="btn-shot" title="Save a PNG screenshot">PNG</button>
+    </div>
+  </header>
+
+  <main>
+    <aside id="side">
+      <nav id="tabs">
+        <button data-tab="groups" class="active">Groups</button>
+        <button data-tab="selection">Selection <span id="sel-badge" class="badge">0</span></button>
+        <button data-tab="schema">Schema</button>
+      </nav>
+      <section id="tab-groups" class="tab active">
+        <div class="hint">Click a row to select its elements (Shift adds, Ctrl removes). Edit cells to change values; per‑element columns (<i>italic</i>) apply to every element of the group.</div>
+        <div class="table-wrap"><table id="group-table"></table></div>
+      </section>
+      <section id="tab-selection" class="tab">
+        <div id="selection-panel"></div>
+      </section>
+      <section id="tab-schema" class="tab">
+        <div id="schema-panel"></div>
+      </section>
+      <div id="side-resizer"></div>
+    </aside>
+
+    <section id="viewport">
+      <div id="legend"></div>
+      <div id="boxsel"></div>
+      <div id="hoverinfo"></div>
+      <div id="empty">
+        <h2>No model loaded</h2>
+        <p>Open a netCDF discrete model to begin.</p>
+        <button id="btn-open2">Open…</button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="status">
+    <span id="st-file">—</span>
+    <span id="st-dirty"></span>
+    <span id="st-counts"></span>
+    <span id="st-msg"></span>
+  </footer>
+
+  <dialog id="dlg-open">
+    <form method="dialog">
+      <h3>Open model</h3>
+      <div class="row"><input id="open-path" type="text" placeholder="Full path to .nc file" spellcheck="false"><button id="open-go" value="go">Open</button></div>
+      <div id="open-dir" class="mono"></div>
+      <ul id="open-list"></ul>
+      <div class="actions"><button value="cancel">Cancel</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-save">
+    <form method="dialog">
+      <h3 id="save-title">Save as</h3>
+      <div class="row"><input id="save-path" type="text" spellcheck="false"></div>
+      <label class="chk"><input type="checkbox" id="save-backup" checked> keep a <code>.bak</code> of any file being replaced</label>
+      <div id="save-summary"></div>
+      <div class="actions"><button id="save-go" value="go" class="primary">Save</button><button value="cancel">Cancel</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-prompt">
+    <form method="dialog">
+      <h3 id="prompt-title"></h3>
+      <div id="prompt-body"></div>
+      <div class="actions"><button value="ok" class="primary">OK</button><button value="cancel">Cancel</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

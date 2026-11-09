@@ -1,0 +1,5 @@
+# LF everywhere so the tool runs as-is on Linux; the Windows launcher keeps CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.nc binary
+*.nc4 binary
